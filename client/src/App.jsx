@@ -5,7 +5,7 @@ import { useBooks } from './hooks/useBooks.js';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('waiting');
-  const { waitingList, readingLog, addToWaiting, moveToLog, updateReview, removeFromWaiting } =
+  const { waitingList, readingLog, addToWaiting, moveToLog, updateReview, removeFromWaiting, removeFromLog } =
     useBooks();
 
   return (
@@ -24,7 +24,7 @@ export default function App() {
             onRemove={removeFromWaiting}
           />
         ) : (
-          <ReadingLog books={readingLog} onUpdateReview={updateReview} />
+          <ReadingLog books={readingLog} onUpdateReview={updateReview} onRemove={removeFromLog} />
         )}
       </main>
 

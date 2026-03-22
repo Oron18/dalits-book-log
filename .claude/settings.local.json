@@ -12,7 +12,12 @@
       "Bash(curl -s \"http://localhost:5000/api/search?q=%D7%94%D7%90%D7%A8%D7%99+%D7%A4%D7%95%D7%98%D7%A8\")",
       "Bash(curl -s \"http://localhost:5000/api/book?url=https%3A%2F%2Fwww.e-vrit.co.il%2FProduct%2F39171%2F%D7%90%D7%94%D7%91%D7%94_%D7%9C%D7%90_%D7%91%D7%AA%D7%A4%D7%A8%D7%99%D7%98\")",
       "Bash(curl -s \"https://www.e-vrit.co.il/Product/39171/%D7%90%D7%94%D7%91%D7%94_%D7%9C%D7%90_%D7%91%D7%AA%D7%A4%D7%A8%D7%99%D7%98\")",
-      "Bash(cmd.exe /c \"netstat -ano | findstr :5000\")"
+      "Bash(cmd.exe /c \"netstat -ano | findstr :5000\")",
+      "Bash(gh auth status)",
+      "Bash(git remote add origin https://github.com/Oron18/dalits-book-log.git)",
+      "Bash(cmd.exe /c \"gh auth token\")",
+      "Bash(cmd.exe /c \"gh auth token 2>&1\")",
+      "Bash(powershell.exe -Command \"& ''C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe'' auth token\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\user\\.claude\\projects\\c--Users-user-Desktop-Dalit-s-Book-Log"

@@ -539,6 +539,25 @@ img {
   margin-bottom: 2px;
 }
 
+.log-card-header {
+  display: flex;
+  justify-content: flex-start;
+  padding: 8px 12px 0;
+}
+
+.delete-log-btn {
+  font-size: 1rem;
+  color: var(--text-muted);
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s, color 0.2s;
+}
+
+.delete-log-btn:hover {
+  background: #fff0ee;
+  color: var(--terracotta);
+}
+
 /* ===== REVIEW SECTION ===== */
 .review-section {
   border-top: 1px solid var(--sand-light);
