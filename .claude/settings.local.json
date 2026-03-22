@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/user/Desktop/**)",
+      "WebFetch(domain:www.e-vrit.co.il)",
+      "Bash(taskkill /F /IM node.exe)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :3001)",
+      "Bash(taskkill /PID 126416 /F)",
+      "Bash(cmd.exe /c \"taskkill /PID 126416 /F\")",
+      "Bash(cmd.exe /c \"netstat -ano | findstr :3001\")",
+      "Bash(curl -s \"http://localhost:5000/api/search?q=%D7%94%D7%90%D7%A8%D7%99+%D7%A4%D7%95%D7%98%D7%A8\")",
+      "Bash(curl -s \"http://localhost:5000/api/book?url=https%3A%2F%2Fwww.e-vrit.co.il%2FProduct%2F39171%2F%D7%90%D7%94%D7%91%D7%94_%D7%9C%D7%90_%D7%91%D7%AA%D7%A4%D7%A8%D7%99%D7%98\")",
+      "Bash(curl -s \"https://www.e-vrit.co.il/Product/39171/%D7%90%D7%94%D7%91%D7%94_%D7%9C%D7%90_%D7%91%D7%AA%D7%A4%D7%A8%D7%99%D7%98\")",
+      "Bash(cmd.exe /c \"netstat -ano | findstr :5000\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\user\\.claude\\projects\\c--Users-user-Desktop-Dalit-s-Book-Log"
+    ]
+  }
+}
