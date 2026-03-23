@@ -1,7 +1,9 @@
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { getBookDetails } = require('./scraper');
+const importBooks = require('../api/import-books');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,6 +24,9 @@ app.get('/api/book', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// Import books from e-vrit account
+app.post('/api/import-books', importBooks);
 
 // Serve React client
 const clientBuild = path.join(__dirname, '..', 'client', 'dist');

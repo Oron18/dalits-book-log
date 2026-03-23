@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(vercel env add EVRIT_EMAIL production --scope oron18s-projects)",
+      "Bash(vercel env add EVRIT_PASSWORD production --scope oron18s-projects)"
+    ]
+  }
+}

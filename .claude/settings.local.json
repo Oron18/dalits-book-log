@@ -19,7 +19,13 @@
       "Bash(cmd.exe /c \"gh auth token 2>&1\")",
       "Bash(powershell.exe -Command \"& ''C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe'' auth token\")",
       "Bash(vercel --version)",
-      "Bash(npm install -g vercel)"
+      "Bash(npm install -g vercel)",
+      "Bash(curl -s \"https://www.e-vrit.co.il/Login\")",
+      "Bash(curl -s -L \"https://www.e-vrit.co.il/CustomerProducts\")",
+      "Bash(curl -s -L -I \"https://www.e-vrit.co.il/CustomerProducts\")",
+      "Bash(curl -s \"https://www.e-vrit.co.il/Script/siteJsx\")",
+      "Bash(curl -s \"https://www.e-vrit.co.il/Script/site\")",
+      "Bash(curl -s \"https://www.e-vrit.co.il/\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\user\\.claude\\projects\\c--Users-user-Desktop-Dalit-s-Book-Log"

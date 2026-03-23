@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import BookCard from '../components/BookCard.jsx';
 import AddBookForm from '../components/AddBookForm.jsx';
+import ImportModal from '../components/ImportModal.jsx';
 
-export default function WaitingList({ books, onAddBook, onMoveToLog, onRemove }) {
+export default function WaitingList({ books, readingLog, onAddBook, onMoveToLog, onRemove }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
   const [linkLoading, setLinkLoading] = useState(false);
   const [linkError, setLinkError] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showImport, setShowImport] = useState(false);
+
+  const allIds = [...books, ...(readingLog || [])].map((b) => b.id);
 
   const filtered = searchQuery.trim()
     ? books.filter(
@@ -22,7 +26,6 @@ export default function WaitingList({ books, onAddBook, onMoveToLog, onRemove })
     const url = linkUrl.trim();
     if (!url) return;
 
-    // Check if already in list
     const alreadyAdded = books.some((b) => b.id === url || b.productUrl === url);
     if (alreadyAdded) {
       setLinkError('הספר כבר נמצא ברשימה');
@@ -56,6 +59,11 @@ export default function WaitingList({ books, onAddBook, onMoveToLog, onRemove })
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
+
+      {/* Import from account */}
+      <button className="import-account-btn" onClick={() => setShowImport(true)}>
+        ☁️ ייבא ספרים מחשבון e-vrit
+      </button>
 
       {/* Add by e-vrit link */}
       <div className="link-section">
@@ -126,6 +134,14 @@ export default function WaitingList({ books, onAddBook, onMoveToLog, onRemove })
             onAddBook(book);
             setShowAddForm(false);
           }}
+        />
+      )}
+
+      {showImport && (
+        <ImportModal
+          onClose={() => setShowImport(false)}
+          onAdd={onAddBook}
+          existingIds={allIds}
         />
       )}
     </div>
