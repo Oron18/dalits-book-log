@@ -8,10 +8,19 @@ export default function PriceTracker({
   onDismissNotification,
   onMoveToWaiting,
 }) {
+  const [searchQuery, setSearchQuery] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
   const [linkLoading, setLinkLoading] = useState(false);
   const [linkError, setLinkError] = useState('');
   const [refreshing, setRefreshing] = useState(new Set());
+
+  const filtered = searchQuery.trim()
+    ? books.filter(
+        (b) =>
+          b.title.includes(searchQuery) ||
+          (b.author && b.author.includes(searchQuery))
+      )
+    : books;
 
   async function handleRefresh(bookId) {
     setRefreshing((prev) => new Set([...prev, bookId]));
@@ -47,6 +56,17 @@ export default function PriceTracker({
 
   return (
     <div className="page">
+      {/* Search */}
+      <div className="search-row">
+        <input
+          type="search"
+          className="search-input"
+          placeholder="חיפוש ברשימה..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
       {/* Add book by URL */}
       <div className="link-section">
         <form className="link-form" onSubmit={handleLinkSubmit}>
@@ -76,9 +96,14 @@ export default function PriceTracker({
           <p>אין ספרים במעקב מחירים</p>
           <p className="empty-hint">הדביקי לינק לספר מ-e-vrit כדי לעקוב אחרי המחיר שלו</p>
         </div>
+      ) : filtered.length === 0 ? (
+        <div className="empty-state">
+          <div className="empty-icon">🔍</div>
+          <p>לא נמצאו ספרים עבור "{searchQuery}"</p>
+        </div>
       ) : (
         <div className="book-list">
-          {books.map((book) => (
+          {filtered.map((book) => (
             <div key={book.id} className="price-card">
               {/* Price change banner */}
               {book.priceChangedNotification && (

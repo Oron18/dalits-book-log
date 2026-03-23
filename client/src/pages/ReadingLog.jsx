@@ -1,6 +1,17 @@
+import { useState } from 'react';
 import ReviewInput from '../components/ReviewInput.jsx';
 
 export default function ReadingLog({ books, onUpdateReview, onRemove, onMoveBack }) {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filtered = searchQuery.trim()
+    ? books.filter(
+        (b) =>
+          b.title.includes(searchQuery) ||
+          (b.author && b.author.includes(searchQuery))
+      )
+    : books;
+
   if (books.length === 0) {
     return (
       <div className="page">
@@ -15,54 +26,70 @@ export default function ReadingLog({ books, onUpdateReview, onRemove, onMoveBack
 
   return (
     <div className="page">
-      <div className="book-list">
-        {books.map((book) => (
-          <div key={book.id} className="log-card">
-            <div className="log-card-header">
-              <button
-                className="move-back-btn"
-                onClick={() => onMoveBack(book.id)}
-                title="החזר לממתין לקריאה"
-              >
-                ← ממתין לקריאה
-              </button>
-              <button
-                className="delete-log-btn"
-                onClick={() => onRemove(book.id)}
-                title="מחק מהיומן"
-              >
-                🗑
-              </button>
-            </div>
-            <div className="book-card-inner">
-              <div className="book-cover">
-                {book.imageUrl ? (
-                  <img src={book.imageUrl} alt={book.title} loading="lazy" />
-                ) : (
-                  <div className="cover-placeholder">📚</div>
-                )}
-              </div>
-              <div className="book-info">
-                <h3 className="book-title">{book.title}</h3>
-                {book.author && <p className="book-author">{book.author}</p>}
-                {book.dateAdded && (
-                  <p className="book-date">
-                    נקרא: {new Date(book.dateAdded).toLocaleDateString('he-IL')}
-                  </p>
-                )}
-                {book.description && (
-                  <p className="book-description">{book.description}</p>
-                )}
-              </div>
-            </div>
-            <ReviewInput
-              bookId={book.id}
-              initialReview={book.review}
-              onSave={onUpdateReview}
-            />
-          </div>
-        ))}
+      <div className="search-row">
+        <input
+          type="search"
+          className="search-input"
+          placeholder="חיפוש ברשימה..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
       </div>
+      {filtered.length === 0 ? (
+        <div className="empty-state">
+          <div className="empty-icon">🔍</div>
+          <p>לא נמצאו ספרים עבור "{searchQuery}"</p>
+        </div>
+      ) : (
+        <div className="book-list">
+          {filtered.map((book) => (
+            <div key={book.id} className="log-card">
+              <div className="log-card-header">
+                <button
+                  className="move-back-btn"
+                  onClick={() => onMoveBack(book.id)}
+                  title="החזר לממתין לקריאה"
+                >
+                  ← ממתין לקריאה
+                </button>
+                <button
+                  className="delete-log-btn"
+                  onClick={() => onRemove(book.id)}
+                  title="מחק מהיומן"
+                >
+                  🗑
+                </button>
+              </div>
+              <div className="book-card-inner">
+                <div className="book-cover">
+                  {book.imageUrl ? (
+                    <img src={book.imageUrl} alt={book.title} loading="lazy" />
+                  ) : (
+                    <div className="cover-placeholder">📚</div>
+                  )}
+                </div>
+                <div className="book-info">
+                  <h3 className="book-title">{book.title}</h3>
+                  {book.author && <p className="book-author">{book.author}</p>}
+                  {book.dateAdded && (
+                    <p className="book-date">
+                      נקרא: {new Date(book.dateAdded).toLocaleDateString('he-IL')}
+                    </p>
+                  )}
+                  {book.description && (
+                    <p className="book-description">{book.description}</p>
+                  )}
+                </div>
+              </div>
+              <ReviewInput
+                bookId={book.id}
+                initialReview={book.review}
+                onSave={onUpdateReview}
+              />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
