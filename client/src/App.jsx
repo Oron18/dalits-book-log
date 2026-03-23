@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import WaitingList from './pages/WaitingList.jsx';
 import ReadingLog from './pages/ReadingLog.jsx';
 import PriceTracker from './pages/PriceTracker.jsx';
@@ -12,8 +12,22 @@ export default function App() {
     waitingList, readingLog, addToWaiting, moveToLog, updateReview,
     removeFromWaiting, removeFromLog, moveBackToWaiting,
     trackedBooks, addTrackedBook, removeTrackedBook, refreshTrackedBook,
-    dismissNotification, changesCount, lastSynced,
+    dismissNotification, changesCount, lastSynced, pushToServer,
   } = useStore();
+
+  const [syncing, setSyncing] = useState(false);
+  const [syncDone, setSyncDone] = useState(false);
+
+  const handlePushToServer = useCallback(async () => {
+    setSyncing(true);
+    setSyncDone(false);
+    const ok = await pushToServer();
+    setSyncing(false);
+    if (ok) {
+      setSyncDone(true);
+      setTimeout(() => setSyncDone(false), 3000);
+    }
+  }, [pushToServer]);
 
   const touchStart = useRef(null);
 
@@ -48,7 +62,17 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>יומן הקריאה של דלית</h1>
+        <div className="header-row">
+          <h1>יומן הקריאה של דלית</h1>
+          <button
+            className={`sync-btn ${syncing ? 'syncing' : ''} ${syncDone ? 'sync-done' : ''}`}
+            onClick={handlePushToServer}
+            disabled={syncing}
+            title="סנכרן נתונים לשרת"
+          >
+            {syncDone ? '✓' : '☁'}
+          </button>
+        </div>
         {lastSynced && (
           <p className="last-synced">
             עודכן: {lastSynced.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}

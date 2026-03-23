@@ -267,6 +267,24 @@ export function useStore() {
     }));
   }
 
+  // Force-push current local data to server (manual sync button)
+  async function pushToServer() {
+    const local = loadLocal();
+    try {
+      const res = await fetch('/api/store', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(local),
+      });
+      if (res.ok) {
+        serverAvailable.current = true;
+        setLastSynced(new Date());
+        return true;
+      }
+    } catch (_) {}
+    return false;
+  }
+
   const changesCount = data.trackedBooks.filter((b) => b.priceChangedNotification !== null).length;
 
   return {
@@ -288,5 +306,6 @@ export function useStore() {
     changesCount,
     // sync
     lastSynced,
+    pushToServer,
   };
 }
