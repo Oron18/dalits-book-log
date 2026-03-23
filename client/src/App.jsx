@@ -14,8 +14,12 @@ export default function App() {
     waitingList, readingLog, addToWaiting, moveToLog, updateReview,
     removeFromWaiting, removeFromLog, moveBackToWaiting,
     trackedBooks, addTrackedBook, removeTrackedBook, refreshTrackedBook,
-    dismissNotification, changesCount, lastSynced,
+    dismissNotification, changesCount,
   } = useStore();
+
+  const buildTime = new Date(__BUILD_TIME__).toLocaleString('he-IL', {
+    day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
+  });
 
   function changeTab(tab) {
     setActiveTab(tab);
@@ -56,11 +60,7 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <h1>יומן הקריאה של דלית</h1>
-        {lastSynced && (
-          <p className="last-synced">
-            עודכן: {lastSynced.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}
-          </p>
-        )}
+        <p className="last-synced">גרסה: {buildTime}</p>
       </header>
 
       <main

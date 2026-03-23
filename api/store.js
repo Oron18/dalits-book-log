@@ -1,7 +1,9 @@
 const axios = require('axios');
 
 const BIN_ID = process.env.JSONBIN_BIN_ID;
-const API_KEY = process.env.JSONBIN_API_KEY;
+const API_KEY = process.env.JSONBIN_API_KEY_B64
+  ? Buffer.from(process.env.JSONBIN_API_KEY_B64, 'base64').toString('utf8')
+  : null;
 const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
 const EMPTY_STORE = { waitingList: [], readingLog: [], trackedBooks: [] };
