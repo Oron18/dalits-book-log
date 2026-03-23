@@ -8,13 +8,21 @@ export default function ImportModal({ onClose, onAdd, existingIds }) {
   const [selected, setSelected] = useState(new Set());
   const overlayRef = useRef();
 
+  const [captchaRequired, setCaptchaRequired] = useState(false);
+
   async function fetchBooks() {
     setLoading(true);
     setError('');
     setWarning('');
+    setCaptchaRequired(false);
     try {
       const res = await fetch('/api/import-books', { method: 'POST' });
       const data = await res.json();
+      if (data.captchaRequired) {
+        setCaptchaRequired(true);
+        setError(data.error || 'האתר דורש אימות CAPTCHA');
+        return;
+      }
       if (!res.ok || data.error) throw new Error(data.error || 'שגיאה בייבוא');
       setBooks(data.books || []);
       if (data.warning) setWarning(data.warning);
@@ -59,13 +67,36 @@ export default function ImportModal({ onClose, onAdd, existingIds }) {
         <button className="modal-close" onClick={onClose} aria-label="סגור">✕</button>
         <h2 className="modal-title">ייבוא ספרים מחשבון e-vrit</h2>
 
-        {books === null && !loading && (
+        {books === null && !loading && !captchaRequired && (
           <div className="import-start">
             <p className="import-desc">תחבר לחשבון e-vrit שלך ומשוך את רשימת הספרים שרכשת.</p>
             <button className="add-btn" onClick={fetchBooks}>
               🔄 התחבר ומשוך ספרים
             </button>
             {error && <p className="error-msg">{error}</p>}
+          </div>
+        )}
+
+        {captchaRequired && !loading && (
+          <div className="import-captcha">
+            <p className="captcha-icon">🔒</p>
+            <p className="captcha-title">האתר דורש אימות ידני</p>
+            <p className="captcha-desc">
+              e-vrit.co.il חוסם התחברות אוטומטית עם CAPTCHA.
+              <br />
+              כדי להוסיף ספרים, היכנסי לאתר ידנית והדביקי לינק לכל ספר.
+            </p>
+            <a
+              href="https://www.e-vrit.co.il/CustomerProducts"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="add-btn captcha-link-btn"
+            >
+              🔗 פתחי את הספרים שלי ב-e-vrit
+            </a>
+            <button className="retry-btn" onClick={fetchBooks}>
+              נסי שוב
+            </button>
           </div>
         )}
 

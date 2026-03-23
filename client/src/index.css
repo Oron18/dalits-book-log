@@ -334,6 +334,47 @@ img {
   margin-top: 2px;
 }
 
+.import-captcha {
+  text-align: center;
+  padding: 8px 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.captcha-icon {
+  font-size: 2.5rem;
+  margin: 0;
+}
+.captcha-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--brown-dark);
+  margin: 0;
+}
+.captcha-desc {
+  font-size: 0.88rem;
+  color: var(--text-soft);
+  line-height: 1.6;
+  margin: 0;
+}
+.captcha-link-btn {
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+}
+.retry-btn {
+  background: none;
+  border: 1.5px solid var(--sand-dark, #c9b89a);
+  border-radius: var(--radius-md);
+  color: var(--text-soft);
+  font-family: inherit;
+  font-size: 0.88rem;
+  padding: 8px 20px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
 /* ===== LINK SECTION ===== */
 .link-section {
   background: var(--white);
