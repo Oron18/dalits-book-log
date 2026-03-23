@@ -279,10 +279,14 @@ export function useStore() {
       if (res.ok) {
         serverAvailable.current = true;
         setLastSynced(new Date());
-        return true;
+        return { ok: true };
       }
-    } catch (_) {}
-    return false;
+      let errMsg = `שגיאת שרת ${res.status}`;
+      try { const d = await res.json(); if (d.error) errMsg = d.error; } catch (_) {}
+      return { ok: false, error: errMsg };
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
   }
 
   const changesCount = data.trackedBooks.filter((b) => b.priceChangedNotification !== null).length;

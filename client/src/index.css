@@ -132,6 +132,13 @@ img {
   margin: 3px 0 0;
 }
 
+.sync-error {
+  font-size: 0.68rem;
+  color: #fca5a5;
+  margin: 3px 0 0;
+  direction: ltr;
+}
+
 /* ===== MAIN CONTENT ===== */
 .app-main {
   flex: 1;

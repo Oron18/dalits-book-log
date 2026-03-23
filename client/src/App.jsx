@@ -17,15 +17,20 @@ export default function App() {
 
   const [syncing, setSyncing] = useState(false);
   const [syncDone, setSyncDone] = useState(false);
+  const [syncError, setSyncError] = useState('');
 
   const handlePushToServer = useCallback(async () => {
     setSyncing(true);
     setSyncDone(false);
-    const ok = await pushToServer();
+    setSyncError('');
+    const result = await pushToServer();
     setSyncing(false);
-    if (ok) {
+    if (result.ok) {
       setSyncDone(true);
       setTimeout(() => setSyncDone(false), 3000);
+    } else {
+      setSyncError(result.error || 'שגיאה לא ידועה');
+      setTimeout(() => setSyncError(''), 8000);
     }
   }, [pushToServer]);
 
@@ -73,7 +78,8 @@ export default function App() {
             {syncDone ? '✓' : '☁'}
           </button>
         </div>
-        {lastSynced && (
+        {syncError && <p className="sync-error">{syncError}</p>}
+        {!syncError && lastSynced && (
           <p className="last-synced">
             עודכן: {lastSynced.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}
           </p>
