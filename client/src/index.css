@@ -541,8 +541,23 @@ img {
 
 .log-card-header {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
+  align-items: center;
   padding: 8px 12px 0;
+}
+
+.move-back-btn {
+  font-size: 0.78rem;
+  color: var(--brown-light);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--sand);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.move-back-btn:hover {
+  background: var(--sand-light);
+  border-color: var(--brown-light);
 }
 
 .delete-log-btn {

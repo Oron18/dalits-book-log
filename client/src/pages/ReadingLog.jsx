@@ -1,6 +1,6 @@
 import ReviewInput from '../components/ReviewInput.jsx';
 
-export default function ReadingLog({ books, onUpdateReview, onRemove }) {
+export default function ReadingLog({ books, onUpdateReview, onRemove, onMoveBack }) {
   if (books.length === 0) {
     return (
       <div className="page">
@@ -19,6 +19,13 @@ export default function ReadingLog({ books, onUpdateReview, onRemove }) {
         {books.map((book) => (
           <div key={book.id} className="log-card">
             <div className="log-card-header">
+              <button
+                className="move-back-btn"
+                onClick={() => onMoveBack(book.id)}
+                title="החזר לממתין לקריאה"
+              >
+                ← ממתין לקריאה
+              </button>
               <button
                 className="delete-log-btn"
                 onClick={() => onRemove(book.id)}

@@ -68,6 +68,18 @@ export function useBooks() {
     }));
   }
 
+  function moveBackToWaiting(bookId) {
+    setData((prev) => {
+      const book = prev.readingLog.find((b) => b.id === bookId);
+      if (!book) return prev;
+      const { review, dateAdded, ...bookData } = book;
+      return {
+        waitingList: [bookData, ...prev.waitingList],
+        readingLog: prev.readingLog.filter((b) => b.id !== bookId),
+      };
+    });
+  }
+
   return {
     waitingList: data.waitingList,
     readingLog: data.readingLog,
@@ -76,5 +88,6 @@ export function useBooks() {
     updateReview,
     removeFromWaiting,
     removeFromLog,
+    moveBackToWaiting,
   };
 }

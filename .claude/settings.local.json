@@ -17,7 +17,9 @@
       "Bash(git remote add origin https://github.com/Oron18/dalits-book-log.git)",
       "Bash(cmd.exe /c \"gh auth token\")",
       "Bash(cmd.exe /c \"gh auth token 2>&1\")",
-      "Bash(powershell.exe -Command \"& ''C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe'' auth token\")"
+      "Bash(powershell.exe -Command \"& ''C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe'' auth token\")",
+      "Bash(vercel --version)",
+      "Bash(npm install -g vercel)"
     ],
     "additionalDirectories": [
       "C:\\Users\\user\\.claude\\projects\\c--Users-user-Desktop-Dalit-s-Book-Log"
