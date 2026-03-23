@@ -11,8 +11,8 @@ export default function App() {
   const {
     waitingList, readingLog, addToWaiting, moveToLog, updateReview,
     removeFromWaiting, removeFromLog, moveBackToWaiting,
-    trackedBooks, addTrackedBook, removeTrackedBook,
-    dismissNotification, changesCount,
+    trackedBooks, addTrackedBook, removeTrackedBook, refreshTrackedBook,
+    dismissNotification, changesCount, lastSynced,
   } = useStore();
 
   const touchStart = useRef(null);
@@ -49,6 +49,11 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <h1>יומן הקריאה של דלית</h1>
+        {lastSynced && (
+          <p className="last-synced">
+            עודכן: {lastSynced.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}
+          </p>
+        )}
       </header>
 
       <main
@@ -61,6 +66,7 @@ export default function App() {
             books={trackedBooks}
             onAddBook={addTrackedBook}
             onRemove={removeTrackedBook}
+            onRefresh={refreshTrackedBook}
             onDismissNotification={dismissNotification}
             onMoveToWaiting={handleMoveToWaiting}
           />

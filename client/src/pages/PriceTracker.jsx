@@ -4,12 +4,20 @@ export default function PriceTracker({
   books,
   onAddBook,
   onRemove,
+  onRefresh,
   onDismissNotification,
   onMoveToWaiting,
 }) {
   const [linkUrl, setLinkUrl] = useState('');
   const [linkLoading, setLinkLoading] = useState(false);
   const [linkError, setLinkError] = useState('');
+  const [refreshing, setRefreshing] = useState(new Set());
+
+  async function handleRefresh(bookId) {
+    setRefreshing((prev) => new Set([...prev, bookId]));
+    await onRefresh(bookId);
+    setRefreshing((prev) => { const next = new Set(prev); next.delete(bookId); return next; });
+  }
 
   async function handleLinkSubmit(e) {
     e.preventDefault();
@@ -102,7 +110,13 @@ export default function PriceTracker({
               )}
 
               <div className="price-card-body">
-                {/* Cover */}
+                {/* Cover + Info — clickable to open book page */}
+                <a
+                  href={book.productUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="price-card-link"
+                >
                 <div className="price-cover">
                   {book.imageUrl ? (
                     <img src={book.imageUrl} alt={book.title} loading="lazy" />
@@ -143,9 +157,18 @@ export default function PriceTracker({
                     )}
                   </div>
                 </div>
+                </a>
 
                 {/* Actions */}
                 <div className="price-actions">
+                  <button
+                    className="price-refresh-btn"
+                    onClick={() => handleRefresh(book.id)}
+                    disabled={refreshing.has(book.id)}
+                    title="רענן מחיר"
+                  >
+                    {refreshing.has(book.id) ? <span className="btn-spinner" /> : '🔄'}
+                  </button>
                   <button
                     className="price-move-btn"
                     onClick={() => onMoveToWaiting(book)}

@@ -88,6 +88,12 @@ img {
   letter-spacing: 0.02em;
 }
 
+.last-synced {
+  font-size: 0.68rem;
+  opacity: 0.65;
+  margin: 3px 0 0;
+}
+
 /* ===== MAIN CONTENT ===== */
 .app-main {
   flex: 1;
@@ -1126,6 +1132,12 @@ img {
   line-height: 1;
 }
 
+.price-card-link {
+  display: contents;
+  text-decoration: none;
+  color: inherit;
+}
+
 .price-card-body {
   display: flex;
   align-items: center;
@@ -1243,6 +1255,7 @@ img {
   flex-shrink: 0;
 }
 
+.price-refresh-btn,
 .price-move-btn,
 .price-remove-btn {
   width: 36px;
@@ -1256,6 +1269,7 @@ img {
   justify-content: center;
   cursor: pointer;
 }
+.price-refresh-btn:active,
 .price-move-btn:active,
 .price-remove-btn:active {
   background: var(--sand-light);
