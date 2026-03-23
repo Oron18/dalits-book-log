@@ -61,13 +61,23 @@ export default function ReadingLog({ books, onUpdateReview, onRemove, onMoveBack
                 </button>
               </div>
               <div className="book-card-inner">
-                <div className="book-cover">
-                  {book.imageUrl ? (
-                    <img src={book.imageUrl} alt={book.title} loading="lazy" />
-                  ) : (
-                    <div className="cover-placeholder">📚</div>
-                  )}
-                </div>
+                {book.productUrl ? (
+                  <a href={book.productUrl} target="_blank" rel="noopener noreferrer" className="book-cover">
+                    {book.imageUrl ? (
+                      <img src={book.imageUrl} alt={book.title} loading="lazy" />
+                    ) : (
+                      <div className="cover-placeholder">📚</div>
+                    )}
+                  </a>
+                ) : (
+                  <div className="book-cover">
+                    {book.imageUrl ? (
+                      <img src={book.imageUrl} alt={book.title} loading="lazy" />
+                    ) : (
+                      <div className="cover-placeholder">📚</div>
+                    )}
+                  </div>
+                )}
                 <div className="book-info">
                   <h3 className="book-title">{book.title}</h3>
                   {book.author && <p className="book-author">{book.author}</p>}
