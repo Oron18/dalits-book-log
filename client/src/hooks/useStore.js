@@ -82,6 +82,9 @@ export function useStore() {
             return {
               ...b,
               currentPrice: newPrice || b.currentPrice,
+              priceOriginal: updated.priceOriginal || b.priceOriginal || '',
+              priceBargain: updated.priceBargain || b.priceBargain || '',
+              priceClub: updated.priceClub || b.priceClub || '',
               lastChecked: now,
               priceChangedNotification: priceChanged
                 ? { from: b.currentPrice, to: newPrice, date: now }
@@ -178,6 +181,9 @@ export function useStore() {
             imageUrl: book.imageUrl || '',
             productUrl: book.productUrl,
             currentPrice: book.price || '',
+            priceOriginal: book.priceOriginal || '',
+            priceBargain: book.priceBargain || '',
+            priceClub: book.priceClub || '',
             lastChecked: new Date().toISOString(),
             priceChangedNotification: null,
           },

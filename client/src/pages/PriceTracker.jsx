@@ -115,14 +115,33 @@ export default function PriceTracker({
                 <div className="price-info">
                   <p className="price-title">{book.title}</p>
                   {book.author && <p className="price-author">{book.author}</p>}
-                  {book.currentPrice ? (
-                    <p className="price-badge">
-                      <span className="price-label">ספר דיגיטלי</span>
-                      {book.currentPrice}
-                    </p>
-                  ) : (
-                    <p className="price-unavailable">מחיר לא זמין</p>
-                  )}
+                  <div className="price-fields">
+                    {book.priceOriginal && (
+                      <p className="price-row">
+                        <span className="price-field-label">מחיר רגיל</span>
+                        <span className={book.priceBargain || book.priceClub ? 'price-struck' : 'price-value'}>
+                          {book.priceOriginal}
+                        </span>
+                      </p>
+                    )}
+                    {book.priceBargain && (
+                      <p className="price-row">
+                        <span className="price-field-label">מבצע</span>
+                        <span className={book.priceClub ? 'price-struck' : 'price-value price-highlight'}>
+                          {book.priceBargain}
+                        </span>
+                      </p>
+                    )}
+                    {book.priceClub && (
+                      <p className="price-row">
+                        <span className="price-field-label">מועדון</span>
+                        <span className="price-value price-highlight">{book.priceClub}</span>
+                      </p>
+                    )}
+                    {!book.priceOriginal && !book.priceBargain && !book.priceClub && (
+                      <p className="price-unavailable">מחיר לא זמין</p>
+                    )}
+                  </div>
                 </div>
 
                 {/* Actions */}

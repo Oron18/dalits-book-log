@@ -15,7 +15,8 @@ async function getBookDetails(productUrl) {
     const $ = cheerio.load(response.data);
     const html = response.data;
 
-    let book = { title: '', author: '', description: '', imageUrl: '', productUrl, price: '' };
+    let book = { title: '', author: '', description: '', imageUrl: '', productUrl,
+                 price: '', priceOriginal: '', priceBargain: '', priceClub: '' };
 
     // Try JSON-LD structured data first
     $('script[type="application/ld+json"]').each((_, el) => {
@@ -63,17 +64,20 @@ async function getBookDetails(productUrl) {
     if (book.description && book.description.length > 400)
       book.description = book.description.substring(0, 397) + '...';
 
-    // ── Fallback: inline JS price fields ──────────────────────
-    // DigitalClubMemberPrice = the discounted price shown on the site
-    // DigitalOriginalPrice   = the undiscounted original price
-    if (!book.price) {
-      const m = html.match(/"DigitalClubMemberPrice"\s*:\s*([\d.]+)/)
-             || html.match(/"DigitalOriginalPrice"\s*:\s*([\d.]+)/);
-      if (m) {
-        const num = parseFloat(m[1]);
-        if (!isNaN(num)) book.price = `₪${num % 1 === 0 ? num : num.toFixed(2)}`;
-      }
+    // Extract all three digital price fields
+    function extractField(fieldName) {
+      const m = html.match(new RegExp(`"${fieldName}"\\s*:\\s*([\\d.]+)`));
+      if (!m) return '';
+      const num = parseFloat(m[1]);
+      return isNaN(num) ? '' : `₪${num % 1 === 0 ? num : num.toFixed(2)}`;
     }
+    book.priceOriginal = extractField('DigitalOriginalPrice');
+    book.priceBargain  = extractField('DigitalBargainPrice');
+    book.priceClub     = extractField('DigitalClubMemberPrice');
+
+    // Effective price: club → bargain → original
+    if (!book.price)
+      book.price = book.priceClub || book.priceBargain || book.priceOriginal;
 
     book.id = productUrl;
     return book;
