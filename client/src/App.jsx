@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef } from 'react';
 import WaitingList from './pages/WaitingList.jsx';
 import ReadingLog from './pages/ReadingLog.jsx';
 import PriceTracker from './pages/PriceTracker.jsx';
@@ -7,32 +7,20 @@ import { useStore } from './hooks/useStore.js';
 const TABS = ['prices', 'waiting', 'log'];
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('waiting');
+  const [activeTab, setActiveTab] = useState(
+    () => localStorage.getItem('dalits-active-tab') || 'waiting'
+  );
   const {
     waitingList, readingLog, addToWaiting, moveToLog, updateReview,
     removeFromWaiting, removeFromLog, moveBackToWaiting,
     trackedBooks, addTrackedBook, removeTrackedBook, refreshTrackedBook,
-    dismissNotification, changesCount, lastSynced, pushToServer,
+    dismissNotification, changesCount, lastSynced,
   } = useStore();
 
-  const [syncing, setSyncing] = useState(false);
-  const [syncDone, setSyncDone] = useState(false);
-  const [syncError, setSyncError] = useState('');
-
-  const handlePushToServer = useCallback(async () => {
-    setSyncing(true);
-    setSyncDone(false);
-    setSyncError('');
-    const result = await pushToServer();
-    setSyncing(false);
-    if (result.ok) {
-      setSyncDone(true);
-      setTimeout(() => setSyncDone(false), 3000);
-    } else {
-      setSyncError(result.error || 'שגיאה לא ידועה');
-      setTimeout(() => setSyncError(''), 8000);
-    }
-  }, [pushToServer]);
+  function changeTab(tab) {
+    setActiveTab(tab);
+    localStorage.setItem('dalits-active-tab', tab);
+  }
 
   const touchStart = useRef(null);
 
@@ -48,8 +36,8 @@ export default function App() {
     if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
     const currentIndex = TABS.indexOf(activeTab);
     // RTL: swipe right → previous tab, swipe left → next tab
-    if (dx > 0 && currentIndex > 0) setActiveTab(TABS[currentIndex - 1]);
-    if (dx < 0 && currentIndex < TABS.length - 1) setActiveTab(TABS[currentIndex + 1]);
+    if (dx > 0 && currentIndex > 0) changeTab(TABS[currentIndex - 1]);
+    if (dx < 0 && currentIndex < TABS.length - 1) changeTab(TABS[currentIndex + 1]);
   }
 
   function handleMoveToWaiting(book) {
@@ -61,25 +49,14 @@ export default function App() {
       productUrl: book.productUrl,
       description: '',
     });
-    setActiveTab('waiting');
+    changeTab('waiting');
   }
 
   return (
     <div className="app">
       <header className="app-header">
-        <div className="header-row">
-          <h1>יומן הקריאה של דלית</h1>
-          <button
-            className={`sync-btn ${syncing ? 'syncing' : ''} ${syncDone ? 'sync-done' : ''}`}
-            onClick={handlePushToServer}
-            disabled={syncing}
-            title="סנכרן נתונים לשרת"
-          >
-            {syncDone ? '✓' : '☁'}
-          </button>
-        </div>
-        {syncError && <p className="sync-error">{syncError}</p>}
-        {!syncError && lastSynced && (
+        <h1>יומן הקריאה של דלית</h1>
+        {lastSynced && (
           <p className="last-synced">
             עודכן: {lastSynced.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}
           </p>
@@ -122,7 +99,7 @@ export default function App() {
       <nav className="bottom-nav">
         <button
           className={`nav-tab ${activeTab === 'prices' ? 'active' : ''}`}
-          onClick={() => setActiveTab('prices')}
+          onClick={() => changeTab('prices')}
         >
           <span className="nav-icon">💰</span>
           <span className="nav-label">מעקב מחירים</span>
@@ -132,7 +109,7 @@ export default function App() {
         </button>
         <button
           className={`nav-tab ${activeTab === 'waiting' ? 'active' : ''}`}
-          onClick={() => setActiveTab('waiting')}
+          onClick={() => changeTab('waiting')}
         >
           <span className="nav-icon">📚</span>
           <span className="nav-label">ממתין לקריאה</span>
@@ -142,7 +119,7 @@ export default function App() {
         </button>
         <button
           className={`nav-tab ${activeTab === 'log' ? 'active' : ''}`}
-          onClick={() => setActiveTab('log')}
+          onClick={() => changeTab('log')}
         >
           <span className="nav-icon">📖</span>
           <span className="nav-label">יומן קריאה</span>

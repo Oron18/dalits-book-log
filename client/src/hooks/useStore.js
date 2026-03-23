@@ -30,13 +30,6 @@ function saveLocal(data) {
   } catch (_) {}
 }
 
-// Merge two lists by id: primary items first, then any local-only items
-function mergeById(primary, local) {
-  const primaryIds = new Set((primary || []).map((b) => b.id));
-  const localOnly = (local || []).filter((b) => !primaryIds.has(b.id));
-  return [...(primary || []), ...localOnly];
-}
-
 export function useStore() {
   const [data, setData] = useState(loadLocal);
   const [lastSynced, setLastSynced] = useState(() => new Date());
@@ -44,40 +37,21 @@ export function useStore() {
   const saveTimer = useRef(null);
   const priceCheckDone = useRef(false);
 
-  // On mount: merge server data with local data
-  // If server is empty but local has data → push local to server (first-time sync)
+  // On mount: load from server (server is authoritative)
   useEffect(() => {
     fetch('/api/store')
       .then((r) => r.json())
       .then((serverData) => {
         if (serverData.error || serverData._unconfigured) return;
         serverAvailable.current = true;
-
-        const local = loadLocal();
-        const merged = {
-          waitingList: mergeById(serverData.waitingList, local.waitingList),
-          readingLog: mergeById(serverData.readingLog, local.readingLog),
-          trackedBooks: mergeById(serverData.trackedBooks, local.trackedBooks),
+        const loaded = {
+          waitingList: serverData.waitingList || [],
+          readingLog: serverData.readingLog || [],
+          trackedBooks: serverData.trackedBooks || [],
         };
-
-        setData(merged);
-        saveLocal(merged);
+        setData(loaded);
+        saveLocal(loaded);
         setLastSynced(new Date());
-
-        // If local had items the server didn't know about → push merged to server
-        const serverTotal = (serverData.waitingList?.length || 0) +
-                            (serverData.readingLog?.length || 0) +
-                            (serverData.trackedBooks?.length || 0);
-        const mergedTotal = merged.waitingList.length +
-                            merged.readingLog.length +
-                            merged.trackedBooks.length;
-        if (mergedTotal > serverTotal) {
-          fetch('/api/store', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(merged),
-          }).catch(() => {});
-        }
       })
       .catch(() => {});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -267,28 +241,6 @@ export function useStore() {
     }));
   }
 
-  // Force-push current local data to server (manual sync button)
-  async function pushToServer() {
-    const local = loadLocal();
-    try {
-      const res = await fetch('/api/store', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(local),
-      });
-      if (res.ok) {
-        serverAvailable.current = true;
-        setLastSynced(new Date());
-        return { ok: true };
-      }
-      let errMsg = `שגיאת שרת ${res.status}`;
-      try { const d = await res.json(); if (d.error) errMsg = d.error; } catch (_) {}
-      return { ok: false, error: errMsg };
-    } catch (err) {
-      return { ok: false, error: err.message };
-    }
-  }
-
   const changesCount = data.trackedBooks.filter((b) => b.priceChangedNotification !== null).length;
 
   return {
@@ -310,6 +262,5 @@ export function useStore() {
     changesCount,
     // sync
     lastSynced,
-    pushToServer,
   };
 }
