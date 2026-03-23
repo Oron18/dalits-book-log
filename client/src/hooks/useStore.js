@@ -39,7 +39,7 @@ function mergeById(primary, local) {
 
 export function useStore() {
   const [data, setData] = useState(loadLocal);
-  const [lastSynced, setLastSynced] = useState(null);
+  const [lastSynced, setLastSynced] = useState(() => new Date());
   const serverAvailable = useRef(false);
   const saveTimer = useRef(null);
   const priceCheckDone = useRef(false);

@@ -104,7 +104,6 @@ export default function App() {
         {activeTab === 'waiting' && (
           <WaitingList
             books={waitingList}
-            readingLog={readingLog}
             onAddBook={addToWaiting}
             onMoveToLog={moveToLog}
             onRemove={removeFromWaiting}
