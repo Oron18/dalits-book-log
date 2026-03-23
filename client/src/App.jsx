@@ -2,17 +2,18 @@ import { useState, useRef } from 'react';
 import WaitingList from './pages/WaitingList.jsx';
 import ReadingLog from './pages/ReadingLog.jsx';
 import PriceTracker from './pages/PriceTracker.jsx';
-import { useBooks } from './hooks/useBooks.js';
-import { usePriceTracker } from './hooks/usePriceTracker.js';
+import { useStore } from './hooks/useStore.js';
 
 const TABS = ['prices', 'waiting', 'log'];
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('waiting');
-  const { waitingList, readingLog, addToWaiting, moveToLog, updateReview,
-          removeFromWaiting, removeFromLog, moveBackToWaiting } = useBooks();
-  const { trackedBooks, addTrackedBook, removeTrackedBook,
-          dismissNotification, changesCount } = usePriceTracker();
+  const {
+    waitingList, readingLog, addToWaiting, moveToLog, updateReview,
+    removeFromWaiting, removeFromLog, moveBackToWaiting,
+    trackedBooks, addTrackedBook, removeTrackedBook,
+    dismissNotification, changesCount,
+  } = useStore();
 
   const touchStart = useRef(null);
 

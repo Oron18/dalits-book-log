@@ -14,7 +14,7 @@ async function getBookDetails(productUrl) {
   const $ = cheerio.load(response.data);
   const html = response.data;
 
-  let book = { title: '', author: '', description: '', imageUrl: '', productUrl };
+  let book = { title: '', author: '', description: '', imageUrl: '', productUrl, price: '' };
 
   $('script[type="application/ld+json"]').each((_, el) => {
     try {
@@ -26,6 +26,14 @@ async function getBookDetails(productUrl) {
           : data.author?.name || book.author;
         book.description = data.description || book.description;
         book.imageUrl = data.image || book.imageUrl;
+        if (!book.price && data.offers) {
+          const offers = Array.isArray(data.offers) ? data.offers : [data.offers];
+          const offer = offers.find((o) => o.price) || offers[0];
+          if (offer?.price) {
+            const num = parseFloat(String(offer.price).replace(',', '.'));
+            if (!isNaN(num)) book.price = `₪${num % 1 === 0 ? num : num.toFixed(2)}`;
+          }
+        }
       }
     } catch (_e) {}
   });
@@ -48,6 +56,15 @@ async function getBookDetails(productUrl) {
 
   if (book.description && book.description.length > 400)
     book.description = book.description.substring(0, 397) + '...';
+
+  if (!book.price) {
+    const m = html.match(/"DigitalClubMemberPrice"\s*:\s*([\d.]+)/)
+           || html.match(/"DigitalOriginalPrice"\s*:\s*([\d.]+)/);
+    if (m) {
+      const num = parseFloat(m[1]);
+      if (!isNaN(num)) book.price = `₪${num % 1 === 0 ? num : num.toFixed(2)}`;
+    }
+  }
 
   book.id = productUrl;
   return book;

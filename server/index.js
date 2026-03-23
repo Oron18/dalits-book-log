@@ -2,8 +2,25 @@ require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') }
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const { getBookDetails } = require('./scraper');
 const importBooks = require('../api/import-books');
+
+const STORE_FILE = path.join(__dirname, '..', 'store.json');
+const EMPTY_STORE = { waitingList: [], readingLog: [], trackedBooks: [] };
+
+function readStore() {
+  try {
+    if (fs.existsSync(STORE_FILE)) return JSON.parse(fs.readFileSync(STORE_FILE, 'utf8'));
+  } catch (_) {}
+  return { ...EMPTY_STORE };
+}
+
+function writeStore(data) {
+  try {
+    fs.writeFileSync(STORE_FILE, JSON.stringify(data, null, 2), 'utf8');
+  } catch (_) {}
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -27,6 +44,13 @@ app.get('/api/book', async (req, res) => {
 
 // Import books from e-vrit account
 app.post('/api/import-books', importBooks);
+
+// Shared data store
+app.get('/api/store', (req, res) => res.json(readStore()));
+app.put('/api/store', (req, res) => {
+  writeStore(req.body);
+  res.json({ ok: true });
+});
 
 // Serve React client
 const clientBuild = path.join(__dirname, '..', 'client', 'dist');
