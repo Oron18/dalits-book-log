@@ -100,12 +100,19 @@ module.exports = async (req, res) => {
 
   try {
     // ── Step 1: Visit login page to get initial session cookies ────
-    const initRes = await axios.get(`${BASE}/Login`, {
-      headers: { ...BROWSER_HEADERS, Accept: 'text/html,application/xhtml+xml,*/*;q=0.9' },
-      timeout: 12000,
-      validateStatus: () => true,
-    });
-    let cookies = parseCookies(initRes.headers['set-cookie']);
+    // maxRedirects: 0 prevents following any HTTP redirect (which causes ECONNREFUSED on port 80)
+    let cookies = '';
+    try {
+      const initRes = await axios.get(`${BASE}/Login`, {
+        headers: { ...BROWSER_HEADERS, Accept: 'text/html,application/xhtml+xml,*/*;q=0.9' },
+        timeout: 8000,
+        validateStatus: () => true,
+        maxRedirects: 0,
+      });
+      cookies = parseCookies(initRes.headers['set-cookie']);
+    } catch (_) {
+      // Proceed without initial session cookies if the page is unreachable
+    }
 
     // ── Step 2: Attempt login ──────────────────────────────────────
     // Try with empty string captchaToken first, then null
