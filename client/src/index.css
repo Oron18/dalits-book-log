@@ -1078,6 +1078,152 @@ img {
   font-size: 0.9rem;
 }
 
+/* ===== PRICE TRACKER ===== */
+.price-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.price-change-banner {
+  background: #fff3e0;
+  border-bottom: 1.5px solid #f9a825;
+  padding: 10px 14px;
+  font-size: 0.87rem;
+  color: #6d4c0f;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.price-change-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.price-change-link {
+  background: var(--terracotta);
+  color: #fff;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.price-banner-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 2px 4px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.price-card-body {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  gap: 12px;
+}
+
+.price-cover {
+  width: 56px;
+  height: 76px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--sand-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.price-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.price-cover-placeholder {
+  font-size: 1.6rem;
+}
+
+.price-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.price-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--brown-dark);
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+.price-author {
+  font-size: 0.82rem;
+  color: var(--text-soft);
+  margin-bottom: 6px;
+}
+
+.price-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.price-label {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: #555;
+  background: rgba(0,0,0,0.07);
+  border-radius: 10px;
+  padding: 1px 6px;
+}
+
+.price-unavailable {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.price-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.price-move-btn,
+.price-remove-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid var(--sand);
+  background: var(--white);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.price-move-btn:active,
+.price-remove-btn:active {
+  background: var(--sand-light);
+}
+
 /* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar {
   width: 4px;

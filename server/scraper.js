@@ -54,6 +54,35 @@ async function getBookDetails(productUrl) {
     if (book.description && book.description.length > 400)
       book.description = book.description.substring(0, 397) + '...';
 
+    // ── Extract digital book price ────────────────────────────
+    book.price = '';
+
+    // Strategy 1: Cheerio — find container with "דיגיטלי" text, get price inside it
+    $('*').each((_, el) => {
+      if (book.price) return false; // already found
+      const $el = $(el);
+      const ownText = $el.clone().children().remove().end().text().trim();
+      if (ownText === 'ספר דיגיטלי' || ownText === 'דיגיטלי') {
+        // look in parent container for a price
+        const $card = $el.closest('[class]');
+        const priceText = $card.text();
+        const m = priceText.match(/₪\s*([\d.,]+)/);
+        if (m) book.price = `₪${m[1]}`;
+      }
+    });
+
+    // Strategy 2: Regex on raw HTML — find ₪XX near "דיגיטלי"
+    if (!book.price) {
+      // forward: "דיגיטלי" then price within 300 chars
+      const m1 = html.match(/דיגיטלי[\s\S]{0,300}?₪\s*([\d.,]+)/);
+      if (m1) book.price = `₪${m1[1]}`;
+    }
+    if (!book.price) {
+      // reverse: price then "דיגיטלי" within 300 chars
+      const m2 = html.match(/₪\s*([\d.,]+)[\s\S]{0,300}?דיגיטלי/);
+      if (m2) book.price = `₪${m2[1]}`;
+    }
+
     book.id = productUrl;
     return book;
   } catch (err) {

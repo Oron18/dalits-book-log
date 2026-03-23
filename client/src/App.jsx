@@ -1,14 +1,18 @@
 import { useState, useRef } from 'react';
 import WaitingList from './pages/WaitingList.jsx';
 import ReadingLog from './pages/ReadingLog.jsx';
+import PriceTracker from './pages/PriceTracker.jsx';
 import { useBooks } from './hooks/useBooks.js';
+import { usePriceTracker } from './hooks/usePriceTracker.js';
 
-const TABS = ['waiting', 'log'];
+const TABS = ['prices', 'waiting', 'log'];
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('waiting');
   const { waitingList, readingLog, addToWaiting, moveToLog, updateReview,
           removeFromWaiting, removeFromLog, moveBackToWaiting } = useBooks();
+  const { trackedBooks, addTrackedBook, removeTrackedBook,
+          dismissNotification, changesCount } = usePriceTracker();
 
   const touchStart = useRef(null);
 
@@ -21,12 +25,23 @@ export default function App() {
     const dx = e.changedTouches[0].clientX - touchStart.current.x;
     const dy = e.changedTouches[0].clientY - touchStart.current.y;
     touchStart.current = null;
-    // Only act on clearly horizontal swipes
     if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
     const currentIndex = TABS.indexOf(activeTab);
-    // RTL: swipe right → previous tab (ממתין), swipe left → next tab (יומן)
+    // RTL: swipe right → previous tab, swipe left → next tab
     if (dx > 0 && currentIndex > 0) setActiveTab(TABS[currentIndex - 1]);
     if (dx < 0 && currentIndex < TABS.length - 1) setActiveTab(TABS[currentIndex + 1]);
+  }
+
+  function handleMoveToWaiting(book) {
+    addToWaiting({
+      id: book.id,
+      title: book.title,
+      author: book.author,
+      imageUrl: book.imageUrl,
+      productUrl: book.productUrl,
+      description: '',
+    });
+    setActiveTab('waiting');
   }
 
   return (
@@ -40,7 +55,16 @@ export default function App() {
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {activeTab === 'waiting' ? (
+        {activeTab === 'prices' && (
+          <PriceTracker
+            books={trackedBooks}
+            onAddBook={addTrackedBook}
+            onRemove={removeTrackedBook}
+            onDismissNotification={dismissNotification}
+            onMoveToWaiting={handleMoveToWaiting}
+          />
+        )}
+        {activeTab === 'waiting' && (
           <WaitingList
             books={waitingList}
             readingLog={readingLog}
@@ -48,7 +72,8 @@ export default function App() {
             onMoveToLog={moveToLog}
             onRemove={removeFromWaiting}
           />
-        ) : (
+        )}
+        {activeTab === 'log' && (
           <ReadingLog
             books={readingLog}
             onUpdateReview={updateReview}
@@ -59,6 +84,16 @@ export default function App() {
       </main>
 
       <nav className="bottom-nav">
+        <button
+          className={`nav-tab ${activeTab === 'prices' ? 'active' : ''}`}
+          onClick={() => setActiveTab('prices')}
+        >
+          <span className="nav-icon">💰</span>
+          <span className="nav-label">מעקב מחירים</span>
+          {changesCount > 0 && (
+            <span className="nav-badge">{changesCount}</span>
+          )}
+        </button>
         <button
           className={`nav-tab ${activeTab === 'waiting' ? 'active' : ''}`}
           onClick={() => setActiveTab('waiting')}
