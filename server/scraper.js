@@ -63,9 +63,12 @@ async function getBookDetails(productUrl) {
     if (book.description && book.description.length > 400)
       book.description = book.description.substring(0, 397) + '...';
 
-    // ── Fallback: DigitalOriginalPrice in inline JS data ─────
+    // ── Fallback: inline JS price fields ──────────────────────
+    // DigitalClubMemberPrice = the discounted price shown on the site
+    // DigitalOriginalPrice   = the undiscounted original price
     if (!book.price) {
-      const m = html.match(/"DigitalOriginalPrice"\s*:\s*([\d.]+)/);
+      const m = html.match(/"DigitalClubMemberPrice"\s*:\s*([\d.]+)/)
+             || html.match(/"DigitalOriginalPrice"\s*:\s*([\d.]+)/);
       if (m) {
         const num = parseFloat(m[1]);
         if (!isNaN(num)) book.price = `₪${num % 1 === 0 ? num : num.toFixed(2)}`;
