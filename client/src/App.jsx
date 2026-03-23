@@ -14,7 +14,7 @@ export default function App() {
     waitingList, readingLog, addToWaiting, moveToLog, updateReview,
     removeFromWaiting, removeFromLog, moveBackToWaiting,
     trackedBooks, addTrackedBook, removeTrackedBook, refreshTrackedBook,
-    dismissNotification, changesCount,
+    refreshAllTrackedBooks, dismissNotification, changesCount, reorderWaiting,
   } = useStore();
 
   const buildTime = new Date(__BUILD_TIME__).toLocaleString('he-IL', {
@@ -74,6 +74,7 @@ export default function App() {
             onAddBook={addTrackedBook}
             onRemove={removeTrackedBook}
             onRefresh={refreshTrackedBook}
+            onRefreshAll={refreshAllTrackedBooks}
             onDismissNotification={dismissNotification}
             onMoveToWaiting={handleMoveToWaiting}
           />
@@ -84,6 +85,7 @@ export default function App() {
             onAddBook={addToWaiting}
             onMoveToLog={moveToLog}
             onRemove={removeFromWaiting}
+            onReorder={reorderWaiting}
           />
         )}
         {activeTab === 'log' && (

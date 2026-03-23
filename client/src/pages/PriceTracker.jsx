@@ -5,6 +5,7 @@ export default function PriceTracker({
   onAddBook,
   onRemove,
   onRefresh,
+  onRefreshAll,
   onDismissNotification,
   onMoveToWaiting,
 }) {
@@ -13,6 +14,7 @@ export default function PriceTracker({
   const [linkLoading, setLinkLoading] = useState(false);
   const [linkError, setLinkError] = useState('');
   const [refreshing, setRefreshing] = useState(new Set());
+  const [refreshingAll, setRefreshingAll] = useState(false);
 
   const filtered = searchQuery.trim()
     ? books.filter(
@@ -26,6 +28,12 @@ export default function PriceTracker({
     setRefreshing((prev) => new Set([...prev, bookId]));
     await onRefresh(bookId);
     setRefreshing((prev) => { const next = new Set(prev); next.delete(bookId); return next; });
+  }
+
+  async function handleRefreshAll() {
+    setRefreshingAll(true);
+    await onRefreshAll();
+    setRefreshingAll(false);
   }
 
   async function handleLinkSubmit(e) {
@@ -89,6 +97,18 @@ export default function PriceTracker({
         </form>
         {linkError && <p className="link-error">{linkError}</p>}
       </div>
+
+      {books.length > 0 && (
+        <div className="manual-add-row">
+          <button
+            className="refresh-all-btn"
+            onClick={handleRefreshAll}
+            disabled={refreshingAll}
+          >
+            {refreshingAll ? <span className="btn-spinner" /> : '🔄 רענן את כל המחירים'}
+          </button>
+        </div>
+      )}
 
       {books.length === 0 ? (
         <div className="empty-state">

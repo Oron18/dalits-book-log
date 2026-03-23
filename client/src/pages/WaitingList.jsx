@@ -1,21 +1,62 @@
 import { useState } from 'react';
+import {
+  DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext, useSortable, verticalListSortingStrategy, arrayMove,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import BookCard from '../components/BookCard.jsx';
 import AddBookForm from '../components/AddBookForm.jsx';
 
-export default function WaitingList({ books, onAddBook, onMoveToLog, onRemove }) {
+function SortableBook({ book, onMoveToLog, onRemove }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: book.id });
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        position: 'relative',
+      }}
+    >
+      <button className="drag-handle" {...attributes} {...listeners} aria-label="גרור לשינוי סדר">
+        ⠿
+      </button>
+      <BookCard book={book} onMoveToLog={onMoveToLog} onRemove={onRemove} />
+    </div>
+  );
+}
+
+export default function WaitingList({ books, onAddBook, onMoveToLog, onRemove, onReorder }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
   const [linkLoading, setLinkLoading] = useState(false);
   const [linkError, setLinkError] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
 
-  const filtered = searchQuery.trim()
+  const isSearching = searchQuery.trim() !== '';
+  const filtered = isSearching
     ? books.filter(
         (b) =>
           b.title.includes(searchQuery) ||
           (b.author && b.author.includes(searchQuery))
       )
     : books;
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } })
+  );
+
+  function handleDragEnd(event) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = books.findIndex((b) => b.id === active.id);
+    const newIndex = books.findIndex((b) => b.id === over.id);
+    onReorder(arrayMove(books, oldIndex, newIndex));
+  }
 
   async function handleLinkSubmit(e) {
     e.preventDefault();
@@ -105,7 +146,7 @@ export default function WaitingList({ books, onAddBook, onMoveToLog, onRemove })
           <div className="empty-icon">🔍</div>
           <p>לא נמצאו ספרים עבור "{searchQuery}"</p>
         </div>
-      ) : (
+      ) : isSearching ? (
         <div className="book-list">
           {filtered.map((book) => (
             <BookCard
@@ -116,6 +157,21 @@ export default function WaitingList({ books, onAddBook, onMoveToLog, onRemove })
             />
           ))}
         </div>
+      ) : (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={books.map((b) => b.id)} strategy={verticalListSortingStrategy}>
+            <div className="book-list">
+              {books.map((book) => (
+                <SortableBook
+                  key={book.id}
+                  book={book}
+                  onMoveToLog={onMoveToLog}
+                  onRemove={onRemove}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       )}
 
       {showAddForm && (
@@ -127,7 +183,6 @@ export default function WaitingList({ books, onAddBook, onMoveToLog, onRemove })
           }}
         />
       )}
-
     </div>
   );
 }

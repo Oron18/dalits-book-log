@@ -232,6 +232,14 @@ export function useStore() {
     } catch (_) {}
   }
 
+  async function refreshAllTrackedBooks() {
+    await Promise.all(data.trackedBooks.map((b) => refreshTrackedBook(b.id)));
+  }
+
+  function reorderWaiting(newList) {
+    update((prev) => ({ ...prev, waitingList: newList }));
+  }
+
   function dismissNotification(id) {
     update((prev) => ({
       ...prev,
@@ -258,8 +266,11 @@ export function useStore() {
     addTrackedBook,
     removeTrackedBook,
     refreshTrackedBook,
+    refreshAllTrackedBooks,
     dismissNotification,
     changesCount,
+    // waiting list
+    reorderWaiting,
     // sync
     lastSynced,
   };
